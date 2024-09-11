@@ -1,22 +1,24 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace CCCP;
+using Constructs;
+using static Result<List<string>>;
 
 class Program
 {
-    enum PatternType
-    {
-        OpenBraces,
-        CloseBraces,
-        OpenParenthesis,
-        CloseParenthesis,
-        Semicolon,
-        IntKw,
-        ReturnKw,
-        Identifier,
-        IntegerLiteral,
-        Count
-    }
+    //enum PatternType
+    //{
+    //    OpenBraces,
+    //    CloseBraces,
+    //    OpenParenthesis,
+    //    CloseParenthesis,
+    //    Semicolon,
+    //    IntKw,
+    //    ReturnKw,
+    //    Identifier,
+    //    IntegerLiteral,
+    //    Count
+    //}
 
     private static readonly Dictionary<PatternType, string> Patterns = new Dictionary<PatternType, string>()
     {
@@ -39,7 +41,7 @@ class Program
             return 1;
         }
 
-        var lex = Lex(args[0]);
+        var lex = Lex(args[0]).GetValueOrThrow();
         int result = lex.Count;
 
         Console.WriteLine("\nTokens:");
@@ -50,13 +52,23 @@ class Program
 
         Console.WriteLine("\nCount:");
         Console.WriteLine(result);
+
+        List<Pattern> patterns = new List<Pattern>();
+        
+        foreach (var l in lex)
+        {
+            var t = DetermineMatchType(l);
+            patterns.Add(CreatePattern(l, t));
+        }
+        
+        // TODO: Parser.Parse(patterns);
         
         Console.ReadKey();
         
         return result;
     }
 
-    static private List<string> Lex(string path)
+    private static Result<List<string>> Lex(string path)
     {
         //if (File.Exists(path)) // this shit is not working!
         //    throw new ArgumentException("File is not exists");
@@ -85,6 +97,13 @@ class Program
             }
         }
 
-        return result;
+        return result.Count == 0 ? Error("No matches found.") : Ok(result);
     }
+
+    static PatternType DetermineMatchType(string match) => (from pattern in Patterns 
+        where Regex.Count(match, pattern.Value) != 0 
+        orderby (int)pattern.Key 
+        select pattern.Key).First();
+
+    static Pattern CreatePattern(string match, PatternType type) => new Pattern(type, match);
 }

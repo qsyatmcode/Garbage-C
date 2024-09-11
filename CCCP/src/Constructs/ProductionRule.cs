@@ -1,6 +1,13 @@
 ﻿namespace CCCP.Constructs;
 
-public interface IProductionRule<TDerived> where TDerived : IProductionRule<TDerived>
+public class ProductionRule
 {
-    public TDerived FromString();
+    private Pattern[] _rule;
+
+    public ProductionRule(params Pattern[] rule)
+    {
+        if(rule.Length == 0)
+            throw new ArgumentException("Rule must not be empty");
+        _rule = rule;
+    }
 }

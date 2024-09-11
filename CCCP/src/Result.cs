@@ -18,24 +18,12 @@ public class Result<T, E>
         return new Result<T, E>(error);
     }
     
-    // Only for switch operator
-    protected static Result<T, E> OkDefault()
-    {
-        return new Result<T, E>(default(T));
-    }
-
-    // Only for switch operator
-    protected static Result<T, E> ErrorDefault()
-    {
-        return new Result<T, E>(default(E));
-    }
-    
     /// <summary>
     /// Returns Error value if it is created, otherwise Ok value (in out parameter)
     /// </summary>
     /// <param name="value">Ok value (if Error value is not created)</param>
     /// <returns>Error value</returns>
-    public E? Error(out T? value)
+    public E? GetError(out T? value)
     {
         if (_errValue.IsValueCreated)
         {
@@ -73,4 +61,28 @@ public class Result<T, E>
         _errValue = new Lazy<E>(error);
         _okValue = new Lazy<T>();
     }
+}
+
+public class Result<T> : Result<T, ApplicationException>
+{
+    public T GetValueOrThrow() => !_okValue.IsValueCreated ? throw _errValue.Value : _okValue.Value;
+    
+    public new static Result<T> Ok(T value)
+    {
+        return new Result<T>(value);
+    }
+
+    public new static Result<T> Error(ApplicationException error)
+    {
+        return new Result<T>(error);
+    }
+    
+    public static Result<T> Error(string error)
+    {
+        return new Result<T>(new ApplicationException(error));
+    }
+    
+    protected Result(T value) : base(value) { }
+
+    protected Result(ApplicationException error) : base(error) { }
 }
