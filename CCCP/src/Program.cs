@@ -6,20 +6,6 @@ using static Result<List<string>>;
 
 class Program
 {
-    //enum PatternType
-    //{
-    //    OpenBraces,
-    //    CloseBraces,
-    //    OpenParenthesis,
-    //    CloseParenthesis,
-    //    Semicolon,
-    //    IntKw,
-    //    ReturnKw,
-    //    Identifier,
-    //    IntegerLiteral,
-    //    Count
-    //}
-
     private static readonly Dictionary<PatternType, string> Patterns = new Dictionary<PatternType, string>()
     {
         { (PatternType)0, "{" },
@@ -33,25 +19,15 @@ class Program
         { (PatternType)8, "[0-9]+" }
     };
     
-    static int Main(string[] args)
+    static void Main(string[] args)
     {
         if (args.Length < 1)
         {
             Console.WriteLine("Usage: ./CCCP.exe <input>");
-            return 1;
+            return;
         }
 
         var lex = Lex(args[0]).GetValueOrThrow();
-        int result = lex.Count;
-
-        Console.WriteLine("\nTokens:");
-        foreach (var l in lex)
-        {
-            Console.WriteLine($"{l}");
-        }
-
-        Console.WriteLine("\nCount:");
-        Console.WriteLine(result);
 
         List<Pattern> patterns = new List<Pattern>();
         
@@ -60,12 +36,15 @@ class Program
             var t = DetermineMatchType(l);
             patterns.Add(CreatePattern(l, t));
         }
+
+        foreach (var pat in patterns)
+        {
+            Console.WriteLine(pat);
+        }
         
         // TODO: Parser.Parse(patterns);
         
         Console.ReadKey();
-        
-        return result;
     }
 
     private static Result<List<string>> Lex(string path)
@@ -96,14 +75,22 @@ class Program
                 result.Add(m.Value);
             }
         }
-
+;
         return result.Count == 0 ? Error("No matches found.") : Ok(result);
     }
 
-    static PatternType DetermineMatchType(string match) => (from pattern in Patterns 
-        where Regex.Count(match, pattern.Value) != 0 
-        orderby (int)pattern.Key 
-        select pattern.Key).First();
+    static PatternType DetermineMatchType(string match) => 
+        (from pattern in Patterns 
+            where Regex.Count(match, pattern.Value) != 0 
+            orderby (int)pattern.Key 
+            select pattern.Key).First();
 
-    static Pattern CreatePattern(string match, PatternType type) => new Pattern(type, match);
+    static Pattern CreatePattern(string match, PatternType type)
+    {
+        if ((int)type >= (int)PatternType.Identifier)
+        {
+            return new NonTerminalPattern(null, (NonTerminalPatternType)type, match);
+        }
+        return new TerminalPattern((TerminalPatternType)type, match);
+    }
 }
