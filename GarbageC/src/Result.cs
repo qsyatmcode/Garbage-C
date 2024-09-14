@@ -1,4 +1,4 @@
-﻿namespace CCCP;
+﻿namespace GarbageC;
 
 public class Result<T, E>
 {

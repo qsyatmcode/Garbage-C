@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace CCCP;
+namespace GarbageC;
 using Constructs;
 using static Result<List<string>>;
 
@@ -23,7 +23,7 @@ class Program
     {
         if (args.Length < 1)
         {
-            Console.WriteLine("Usage: ./CCCP.exe <input>");
+            Console.WriteLine("Usage: ./.exe <input>");
             return;
         }
 

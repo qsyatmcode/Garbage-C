@@ -1,4 +1,4 @@
-﻿namespace CCCP.Constructs;
+﻿namespace GarbageC.Constructs;
 
 public enum PatternType
 {

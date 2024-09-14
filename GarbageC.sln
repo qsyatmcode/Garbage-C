@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCCP", "CCCP\CCCP.csproj", "{EAB68105-EC11-4B29-957C-8C9ECA3D9681}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GarbageC", "GarbageC\GarbageC.csproj", "{EAB68105-EC11-4B29-957C-8C9ECA3D9681}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
