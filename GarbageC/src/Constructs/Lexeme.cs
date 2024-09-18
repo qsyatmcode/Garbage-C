@@ -8,7 +8,7 @@ public enum RuleType
     Program,
 }
 
-public enum LexemType
+public enum LexemeType
 {
     OpenBraces,
     CloseBraces,
@@ -22,4 +22,4 @@ public enum LexemType
     Count
 }
 
-public record Lexem(LexemType Type, string Value, bool Recursive, RuleType? RecursiveRule);
+public record Lexeme(LexemeType Type, string Value, bool Recursive, RuleType? RecursiveRule);

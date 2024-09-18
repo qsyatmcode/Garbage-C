@@ -1,6 +1,8 @@
-﻿using System.Formats.Asn1;
+﻿using System.Data;
+using System.Formats.Asn1;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+using GarbageC.CodeGeneration;
 
 namespace GarbageC;
 using Constructs;
@@ -8,42 +10,42 @@ using static Result<List<string>>;
 
 class Program
 {
-    private static readonly Dictionary<LexemType, string> Patterns = new Dictionary<LexemType, string>()
+    private static readonly Dictionary<LexemeType, string> Patterns = new Dictionary<LexemeType, string>()
     {
-        { (LexemType)0, "{" },
-        { (LexemType)1, "}" },
-        { (LexemType)2, @"\(" },
-        { (LexemType)3, @"\)" },
-        { (LexemType)4, ";" },
-        { (LexemType)5, "int" },
-        { (LexemType)6, "return" },
-        { (LexemType)7, @"[a-zA-Z]\w*" },
-        { (LexemType)8, "[0-9]+" }
+        { (LexemeType)0, "{" },
+        { (LexemeType)1, "}" },
+        { (LexemeType)2, @"\(" },
+        { (LexemeType)3, @"\)" },
+        { (LexemeType)4, ";" },
+        { (LexemeType)5, "int" },
+        { (LexemeType)6, "return" },
+        { (LexemeType)7, @"[a-zA-Z]\w*" },
+        { (LexemeType)8, "[0-9]+" }
     };
     
-    private static Dictionary<RuleType, List<Lexem[]>> ProductionRules = new Dictionary<RuleType, List<Lexem[]>>()
+    private static Dictionary<RuleType, List<Lexeme[]>> ProductionRules = new Dictionary<RuleType, List<Lexeme[]>>()
     {
         {
             RuleType.Expression,
-            new List<Lexem[]>()
+            new List<Lexeme[]>()
             {
-                new Lexem[] { LexemeOf(LexemType.IntegerLiteral) }
+                new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral) }
             }
         },
         {
             RuleType.Statement,
-            new List<Lexem[]>() { 
-                new Lexem[] { LexemeOf(LexemType.ReturnKeyword), LexemeOf(LexemType.IntegerLiteral, true, RuleType.Expression), LexemeOf(LexemType.Semicolon) } 
+            new List<Lexeme[]>() { 
+                new Lexeme[] { LexemeOf(LexemeType.ReturnKeyword), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Expression), LexemeOf(LexemeType.Semicolon) } 
             }
         },
         {
             RuleType.Function,
-            new List<Lexem[]>()
+            new List<Lexeme[]>()
             {
-                new Lexem[]
+                new Lexeme[]
                 {
-                    LexemeOf(LexemType.IntKeyword), LexemeOf(LexemType.Identifier), LexemeOf(LexemType.OpenParenthesis), LexemeOf(LexemType.CloseParenthesis),
-                    LexemeOf(LexemType.OpenBraces), LexemeOf(LexemType.IntegerLiteral, true, RuleType.Statement), LexemeOf(LexemType.CloseBraces),
+                    LexemeOf(LexemeType.IntKeyword), LexemeOf(LexemeType.Identifier), LexemeOf(LexemeType.OpenParenthesis), LexemeOf(LexemeType.CloseParenthesis),
+                    LexemeOf(LexemeType.OpenBraces), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Statement), LexemeOf(LexemeType.CloseBraces),
                 }
             }
         },
@@ -65,7 +67,7 @@ class Program
 
         var lex = Lex(args[0]).GetValueOrThrow();
 
-        var lexemes = new List<Lexem>();
+        var lexemes = new List<Lexeme>();
         
         foreach (var l in lex)
         {
@@ -78,30 +80,60 @@ class Program
             Console.WriteLine(pat);
         }
         
-        // TODO: Parser.Parse(patterns);
-        
         var d = Parse(lexemes).GetValueOrThrow();
+
+        PrintAST(d);
         
-        
-        Console.ReadKey();
+        Generator.Generate(d, "test");
     }
 
-    private static Result<AST.ASTNode> Parse(List<Lexem> lexemes)
+    private static void PrintAST(ASTNode root, int tabs = 0) // TEMP
     {
-        AST.ASTNode result = new AST.ASTNode();
+        Tabs();
+        Console.WriteLine($"Type: {root.NodeType}");
+        Tabs();
+        Console.WriteLine("Tokens: {");
 
-        List<Lexem> context = new List<Lexem>(); // Для сохранения контекста, если нужно проверить больше 1 лексемы
+        foreach (var token in root.Tokens)
+        {
+            Tabs();
+            Console.WriteLine($":\t{token}");
+        }
+        
+        Tabs();
+        Console.WriteLine("}");
+        Tabs();
+        Console.WriteLine("Childrens:");
+
+        foreach (var node in root.Childrens)
+        {
+            PrintAST(node, tabs + 1);
+        }
+
+        void Tabs()
+        {
+            for (int i = 0; i < tabs; i++)
+            {
+                Console.Write("\t");
+            }
+        }
+    }
+    
+    private static Result<ASTNode> Parse(List<Lexeme> lexemes)
+    {
+        ASTNode result = new ASTNode();
+
         int index = 0;
         
         ParseLexem(ref index, result);
         result.NodeType = RuleType.Program;
 
-        return Result<AST.ASTNode>.Ok(result);
+        return Result<ASTNode>.Ok(result);
 
-        void ParseLexem(ref int index, AST.ASTNode root, RuleType? ruleType = null)
+        void ParseLexem(ref int index, ASTNode root, RuleType? ruleType = null)
         {
-            var current = new AST.ASTNode();
-            var tokens = new List<Lexem>() { Capacity = 8 };
+            var current = new ASTNode();
+            var tokens = new List<Lexeme>() { Capacity = 8 };
             int matches = 0;
             int tempIndex = 0;
 
@@ -120,10 +152,15 @@ class Program
                     {
                         RuleParse(ref index, rule, rules.Key);
                     }
+
+                    //if (root.Childrens.Count == 0)
+                    //{
+                    //    throw new ApplicationException($"No matching rules  Index: {index},\n Lexeme: {lexemes[index]};\n");
+                    //}
                 }
             }
 
-            void RuleParse(ref int index, Lexem[] rule, RuleType type)
+            void RuleParse(ref int index, Lexeme[] rule, RuleType type)
             {
                 matches = 0;
                 tokens.Clear();
@@ -160,9 +197,9 @@ class Program
         }
     }
 
-    public static Lexem LexemeOf(LexemType type, bool recursive = false, RuleType? recursiveRule = null)
+    public static Lexeme LexemeOf(LexemeType type, bool recursive = false, RuleType? recursiveRule = null)
     {
-        return new Lexem(type, Patterns[type], recursive, recursiveRule);
+        return new Lexeme(type, Patterns[type], recursive, recursiveRule);
     }
     
     private static Result<List<string>> Lex(string path)
@@ -171,10 +208,10 @@ class Program
         //    throw new ArgumentException("File is not exists");
 
         string commonPattern = "";
-        for (int i = 0; i < (int)LexemType.Count; i++)
+        for (int i = 0; i < (int)LexemeType.Count; i++)
         {
-            commonPattern += Patterns[ (LexemType)i ]; // so many allocations :))
-            if (i != (int)LexemType.Count - 1)
+            commonPattern += Patterns[ (LexemeType)i ]; // so many allocations :))
+            if (i != (int)LexemeType.Count - 1)
                 commonPattern += "|";
         }
         
@@ -197,14 +234,14 @@ class Program
         return result.Count == 0 ? Error("No matches found.") : Ok(result);
     }
 
-    static LexemType DetermineMatchType(string match) => 
+    static LexemeType DetermineMatchType(string match) => 
         (from pattern in Patterns 
             where Regex.Count(match, pattern.Value) != 0 
             orderby (int)pattern.Key 
             select pattern.Key).First();
 
-    static Lexem CreateLexem(string value, LexemType type)
+    static Lexeme CreateLexem(string value, LexemeType type)
     {
-        return new Lexem(type, value, false, null);
+        return new Lexeme(type, value, false, null);
     }
 }
