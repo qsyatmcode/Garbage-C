@@ -5,7 +5,7 @@ namespace GarbageC.FrontEnd;
 
 using GarbageC.Constructs;
 
-public class SyntaxParser
+public static class SyntaxParser
 {
     private static Lexeme LexemeOf(LexemeType type, bool recursive = false, RuleType? recursiveRule = null, bool indexSkip = false)
     {
@@ -45,23 +45,32 @@ public class SyntaxParser
             {
                 new Lexeme[] { LexemeOf(LexemeType.Multiplication), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Term) },
                 new Lexeme[] { LexemeOf(LexemeType.Division), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Term) },
+                
             }
         },
         {
             RuleType.Term,
             new List<Lexeme[]>
             {
-                new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Factor), LexemeOf(LexemeType.Multiplication), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Term) },
-                new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Factor), LexemeOf(LexemeType.Division), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Term) },
+                new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Factor), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.TermRepit) },
+                new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Factor), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.TermRepit) },
                 new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Factor) },
+            }
+        },
+        {
+            RuleType.ExpressionRepit,
+            new List<Lexeme[]>()
+            {
+                new Lexeme[] { LexemeOf(LexemeType.Addition), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Expression) },
+                new Lexeme[] {  LexemeOf(LexemeType.Minus), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Expression) },
             }
         },
         {
             RuleType.Expression,
             new List<Lexeme[]>()
             {
-                new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Term), LexemeOf(LexemeType.Addition), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Expression) },
-                new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Term), LexemeOf(LexemeType.Minus), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Expression) },
+                new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Term), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.ExpressionRepit) },
+                new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Term), LexemeOf(LexemeType.IntegerLiteral, true, RuleType.ExpressionRepit) },
                 new Lexeme[] { LexemeOf(LexemeType.IntegerLiteral, true, RuleType.Term) },
                 
             }
@@ -105,9 +114,22 @@ public class SyntaxParser
                 for(int i = 0; i < prule.Length; )
                 {
                     // IF RULE IS NON-TERMINAL (RECURSIVE)
-                    if (prule[i].RecursiveRule != null) // TODO: EBNF's { } for repeating
+                    if (prule[i].RecursiveRule != null)
                     {
-                        bool success = AnalyseProduction(currentNode, prule[i].RecursiveRule /* always not null */ ?? RuleType.Program);
+                        RuleType targetRecursiveRule = prule[i].RecursiveRule ?? RuleType.Program;
+                        bool success = false;
+                        
+                        if (prule[i].RecursiveRule == RuleType.ExpressionRepit
+                            || prule[i].RecursiveRule == RuleType.TermRepit) // IF IT IS EBNF's { } repeating
+                        {
+                            success = AnalyseProduction(root, targetRecursiveRule); // ADDING CHILD TO THE ROOT NODE
+                        }
+                        else
+                        {
+                            success = AnalyseProduction(currentNode, targetRecursiveRule);
+                        }
+                        
+                        //success = AnalyseProduction(currentNode, prule[i].RecursiveRule /* always not null */ ?? RuleType.Program);
                         
                         if (success) // IF NON-TERMINAL IS SUCCESSFULLY ANALYSED
                             i++;

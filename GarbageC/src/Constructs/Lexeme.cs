@@ -5,6 +5,7 @@ public enum RuleType
     Statement,
     Function,
     Expression,
+    ExpressionRepit,
     Factor,
     Term,
     TermRepit,
