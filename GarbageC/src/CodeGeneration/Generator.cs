@@ -11,6 +11,8 @@ using Lokad.ILPack;
 
 public class Generator
 {
+    static List<int> _deleteIndexes = new List<int>();
+    
     public static void Generate(ASTNode ast, string assemblyName)
     {
         const string ASSEMBLY_NAME = "IL_Test";
@@ -23,14 +25,6 @@ public class Generator
         
         TypeBuilder typeBuilder = moduleBuilder.DefineType("Program", 
             System.Reflection.TypeAttributes.Class | System.Reflection.TypeAttributes.Public | System.Reflection.TypeAttributes.BeforeFieldInit);
-        //MethodBuilder methodBuilder = typeBuilder.DefineMethod(
-        //    "Main", System.Reflection.MethodAttributes.HideBySig | System.Reflection.MethodAttributes.Public | System.Reflection.MethodAttributes.Static,
-        //    typeof(Int32), new Type[] { typeof(string[]) });
-        
-        // Добавляем атрибут MethodImpl(MethodImplOptions.PreserveSig)
-        //ConstructorInfo methodImplCtor = typeof(MethodImplAttribute).GetConstructor(new Type[] { typeof(MethodImplOptions) });
-        //CustomAttributeBuilder methodImplAttribute = new CustomAttributeBuilder(methodImplCtor, new object[] { MethodImplOptions.PreserveSig });
-        //methodBuilder.SetCustomAttribute(methodImplAttribute);
 
         if (ast.NodeType == RuleType.Program)
         {
@@ -41,24 +35,16 @@ public class Generator
             }
         }
         
-        //ILGenerator generator = methodBuilder.GetILGenerator();
-        
-        //generator.EmitWriteLine("Hello World!");
-        //generator.Emit(System.Reflection.Emit.OpCodes.Ldc_I4_0);
-        //generator.Emit(System.Reflection.Emit.OpCodes.Ret);
-        //EmitAST(ast, generator);
-        
         typeBuilder.CreateType();
         
         File.Delete("test.dll");
         File.Delete("teste.dll");
-        File.Delete("test.exe");
+        //File.Delete("test.exe");
         
         var gen = new Lokad.ILPack.AssemblyGenerator();
 
         var bytes = gen.GenerateAssemblyBytes(assemblyBuilder);
         
-        //Console.WriteLine("ganarate");
         gen.GenerateAssembly(moduleBuilder.Assembly, "test.dll");
 
         Edit();
@@ -68,16 +54,51 @@ public class Generator
     {
         if (node.Childrens.Count != 0)
         {
-            foreach (var child in node.Childrens)
+            if (node.NodeType != RuleType.Expression)
             {
-                EmitAST(child, generator);
+                foreach (var child in node.Childrens)
+                {
+                    EmitAST(child, generator);
+                }
             }
+            else
+            {
+                if (node.Tokens[0].Type == LexemeType.BitwiseComplement)
+                {
+                    foreach (var child in node.Childrens)
+                    {
+                        EmitAST(child, generator);
+                    }
+                }
+                
+            }
+            //foreach (var child in node.Childrens)
+            //{
+            //    EmitAST(child, generator);
+            //}
         }
 
         switch (node.NodeType)
         {
             case RuleType.Expression:
-                Operations.Expression(node, generator);
+                if (node.Childrens.Count != 0) // unary operation
+                {
+                    var type = node.Tokens[0].Type;
+                    switch (type)
+                    {
+                        case LexemeType.BitwiseComplement:
+                            //Operations.Expression(node.Childrens[0], generator);
+                            Operations.UnaryOperation(generator, type, node.Childrens[0]);
+                            break;
+                        default: 
+                            Operations.UnaryOperation(generator, type, node.Childrens[0]);
+                            break;
+                    }
+                }
+                else
+                {
+                    Operations.Expression(node, generator);
+                }
                 break;
             case RuleType.Statement:
                 Operations.ReturnStatement(generator);
@@ -87,6 +108,46 @@ public class Generator
 
     private static class Operations
     {
+        internal static int UnaryOperation(ILGenerator generator, LexemeType opType, ASTNode operand, bool eval = false)
+        {
+            int operandValue;
+            if (operand.Tokens[0].Type != LexemeType.IntegerLiteral)
+            {
+                operandValue = UnaryOperation(generator, operand.Tokens[0].Type, operand.Childrens[0], true);
+            }
+            else
+            {
+                operandValue = int.Parse(operand.Tokens[0].Value);
+            }
+            switch (opType)
+            {
+                case LexemeType.LogicalNegation:
+                    //generator.Emit(System.Reflection.Emit.OpCodes.Pop);
+                    if (eval)
+                        operandValue = operandValue != 0 ? 0 : 1;
+                    else
+                        generator.Emit(operandValue != 0
+                            ? System.Reflection.Emit.OpCodes.Ldc_I4_0
+                            : System.Reflection.Emit.OpCodes.Ldc_I4_1);
+                    break;
+                case LexemeType.Minus:
+                    //_deleteIndexes.Add(generator.ILOffset - 1); // todo
+                    if (eval)
+                        operandValue = -operandValue;
+                    else
+                        generator.Emit(System.Reflection.Emit.OpCodes.Ldc_I4, -operandValue);
+                    break;
+                case LexemeType.BitwiseComplement:
+                    if (eval)
+                        operandValue = ~operandValue;
+                    else
+                        generator.Emit(System.Reflection.Emit.OpCodes.Not);
+                    break;
+            }
+
+            return operandValue;
+        }
+        
         internal static void Expression(ASTNode node, ILGenerator generator)
         {
             Lexeme literal = node.Tokens.Find(lexem => lexem.Type == LexemeType.IntegerLiteral) ?? throw new Exception("Expression value not found");
@@ -152,6 +213,13 @@ public class Generator
 
             // Установка точки входа
             assemblyDefinition.EntryPoint = mainMethod;
+            
+            // TODO Нужно найти решение получше
+            //foreach (var index in _deleteIndexes)
+            //{
+            //    mainMethod.Body.GetILProcessor().RemoveAt(index);
+            //    Console.WriteLine($"Instruction #{index} removed.");
+            //}
 
             // Сохранение измененной сборки
             assemblyDefinition.Write("teste.dll");
