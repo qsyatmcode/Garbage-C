@@ -14,7 +14,22 @@ public class Generator
     
     private static string _sourceFileName = String.Empty;
     private static string _finalFileName = String.Empty;
+    private static string _ROFileName = String.Empty; // Runtime options file name
     private static TypeBuilder _typeBuilder;
+
+    private static readonly string _runtimeConfig =
+@"{
+    ""runtimeOptions"": {
+        ""tfm"": ""net8.0"",
+        ""framework"": {
+            ""name"": ""Microsoft.NETCore.App"",
+            ""version"": ""8.0.0""
+        },
+        ""configProperties"": {
+            ""System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization"": false
+        }
+    }
+}";
 
     public class ILEmitter
     {
@@ -46,18 +61,21 @@ public class Generator
         
         _typeBuilder.CreateType();
 
+        _ROFileName = $"{assemblyName}.runtimeconfig.json";
         _sourceFileName = $"{assemblyName}_src.dll"; // before editing
         _finalFileName = $"{assemblyName}.dll"; // after editing
         
         File.Delete(_sourceFileName);
         File.Delete(_finalFileName);
-        //File.Delete("test.exe");
+        
         
         var gen = new Lokad.ILPack.AssemblyGenerator();
         
         gen.GenerateAssembly(moduleBuilder.Assembly, _sourceFileName);
 
         Edit();
+        
+        CreateRuntimeOptions();
     }
 
     public static void AddFunction(string id)
@@ -81,7 +99,7 @@ public class Generator
     private static void Edit()
     {
         var readerParameters = new ReaderParameters { ReadWrite = true };
-        using (var assemblyDefinition = AssemblyDefinition.ReadAssembly("test.dll", readerParameters))
+        using (var assemblyDefinition = AssemblyDefinition.ReadAssembly(_sourceFileName, readerParameters))
         {
             var programType = assemblyDefinition.MainModule.Types
                 .FirstOrDefault(t => t.Name == "Program");
@@ -107,5 +125,18 @@ public class Generator
         }
 
         Console.WriteLine($"Entry point set successfully. Final assembly version saved to {_finalFileName}");
+    }
+
+    private static void CreateRuntimeOptions()
+    {
+        if (!File.Exists(_ROFileName))
+        {
+            using (StreamWriter writer = File.CreateText(_ROFileName))
+            {
+                writer.Write(_runtimeConfig);
+                writer.Flush();
+            }
+            Console.WriteLine($"Runtime options written in {_ROFileName}");
+        }
     }
 }

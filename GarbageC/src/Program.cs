@@ -16,7 +16,7 @@ class Program
     {
         if (args.Length < 1)
         {
-            Console.WriteLine("Usage: ./.exe <input>");
+            Console.WriteLine("Usage: gc.exe <input>");
             return;
         }
 
@@ -29,7 +29,7 @@ class Program
         CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
         
         var lexElapsed = watch.ElapsedMilliseconds;
-        Console.WriteLine($"Lexical analyses takes {lexElapsed}ms\n");
+        Console.WriteLine($"Lexing takes {lexElapsed}ms\n");
         
         watch.Restart();
         
@@ -37,7 +37,7 @@ class Program
         cprogramParser.ProgramContext tree = parser.program(); // program is root rule
         
         var parseElapsed = watch.ElapsedMilliseconds;
-        Console.WriteLine($"AST Parsing takes {parseElapsed}ms\n");
+        Console.WriteLine($"Parsing takes {parseElapsed}ms\n");
         
         watch.Restart();
         
