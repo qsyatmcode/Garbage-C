@@ -36,8 +36,10 @@ public partial class cprogramParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, WS=8, ID=9, INT=10, 
-		MUL=11, DIV=12, ADD=13, SUB=14, BWC=15, LNT=16;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, COMMENT_LINE=8, 
+		COMMENT_MULTILINE=9, WS=10, ID=11, INT=12, MUL=13, DIV=14, DIVR=15, ADD=16, 
+		SUB=17, BWC=18, LNT=19, BWRS=20, BWLS=21, BWA=22, BWO=23, BWX=24, RGR=25, 
+		RLS=26, RGREQ=27, RLSEQ=28, EQLS=29, NEQLS=30, OR=31, AND=32;
 	public const int
 		RULE_program = 0, RULE_function = 1, RULE_statement = 2, RULE_exp = 3;
 	public static readonly string[] ruleNames = {
@@ -46,11 +48,15 @@ public partial class cprogramParser : Parser {
 
 	private static readonly string[] _LiteralNames = {
 		null, "'int'", "'('", "')'", "'{'", "'}'", "'return'", "';'", null, null, 
-		null, "'*'", "'/'", "'+'", "'-'", "'~'", "'!'"
+		null, null, null, "'*'", "'/'", "'%'", "'+'", "'-'", "'~'", "'!'", "'>>'", 
+		"'<<'", "'&'", "'|'", "'^'", "'>'", "'<'", "'>='", "'<='", "'=='", "'!='", 
+		"'||'", "'&&'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, null, null, null, null, null, null, null, "WS", "ID", "INT", "MUL", 
-		"DIV", "ADD", "SUB", "BWC", "LNT"
+		null, null, null, null, null, null, null, null, "COMMENT_LINE", "COMMENT_MULTILINE", 
+		"WS", "ID", "INT", "MUL", "DIV", "DIVR", "ADD", "SUB", "BWC", "LNT", "BWRS", 
+		"BWLS", "BWA", "BWO", "BWX", "RGR", "RLS", "RGREQ", "RLSEQ", "EQLS", "NEQLS", 
+		"OR", "AND"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -330,6 +336,173 @@ public partial class cprogramParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class BWOrContext : ExpContext {
+		public IToken op;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext[] exp() {
+			return GetRuleContexts<ExpContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext exp(int i) {
+			return GetRuleContext<ExpContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BWO() { return GetToken(cprogramParser.BWO, 0); }
+		public BWOrContext(ExpContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.EnterBWOr(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.ExitBWOr(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IcprogramVisitor<TResult> typedVisitor = visitor as IcprogramVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBWOr(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class RelationalContext : ExpContext {
+		public IToken op;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext[] exp() {
+			return GetRuleContexts<ExpContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext exp(int i) {
+			return GetRuleContext<ExpContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RLS() { return GetToken(cprogramParser.RLS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RGR() { return GetToken(cprogramParser.RGR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RLSEQ() { return GetToken(cprogramParser.RLSEQ, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RGREQ() { return GetToken(cprogramParser.RGREQ, 0); }
+		public RelationalContext(ExpContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.EnterRelational(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.ExitRelational(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IcprogramVisitor<TResult> typedVisitor = visitor as IcprogramVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitRelational(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class BWAndContext : ExpContext {
+		public IToken op;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext[] exp() {
+			return GetRuleContexts<ExpContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext exp(int i) {
+			return GetRuleContext<ExpContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BWA() { return GetToken(cprogramParser.BWA, 0); }
+		public BWAndContext(ExpContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.EnterBWAnd(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.ExitBWAnd(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IcprogramVisitor<TResult> typedVisitor = visitor as IcprogramVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBWAnd(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class LogicalContext : ExpContext {
+		public IToken op;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext[] exp() {
+			return GetRuleContexts<ExpContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext exp(int i) {
+			return GetRuleContext<ExpContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OR() { return GetToken(cprogramParser.OR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode AND() { return GetToken(cprogramParser.AND, 0); }
+		public LogicalContext(ExpContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.EnterLogical(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.ExitLogical(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IcprogramVisitor<TResult> typedVisitor = visitor as IcprogramVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLogical(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class EqualityContext : ExpContext {
+		public IToken op;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext[] exp() {
+			return GetRuleContexts<ExpContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext exp(int i) {
+			return GetRuleContext<ExpContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQLS() { return GetToken(cprogramParser.EQLS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEQLS() { return GetToken(cprogramParser.NEQLS, 0); }
+		public EqualityContext(ExpContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.EnterEquality(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.ExitEquality(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IcprogramVisitor<TResult> typedVisitor = visitor as IcprogramVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEquality(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class BWXorContext : ExpContext {
+		public IToken op;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext[] exp() {
+			return GetRuleContexts<ExpContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext exp(int i) {
+			return GetRuleContext<ExpContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BWX() { return GetToken(cprogramParser.BWX, 0); }
+		public BWXorContext(ExpContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.EnterBWXor(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.ExitBWXor(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IcprogramVisitor<TResult> typedVisitor = visitor as IcprogramVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBWXor(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 	public partial class UnaryContext : ExpContext {
 		public IToken op;
 		[System.Diagnostics.DebuggerNonUserCode] public ExpContext exp() {
@@ -338,6 +511,7 @@ public partial class cprogramParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SUB() { return GetToken(cprogramParser.SUB, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BWC() { return GetToken(cprogramParser.BWC, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LNT() { return GetToken(cprogramParser.LNT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ADD() { return GetToken(cprogramParser.ADD, 0); }
 		public UnaryContext(ExpContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
@@ -356,6 +530,34 @@ public partial class cprogramParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class BWShiftContext : ExpContext {
+		public IToken op;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext[] exp() {
+			return GetRuleContexts<ExpContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpContext exp(int i) {
+			return GetRuleContext<ExpContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BWLS() { return GetToken(cprogramParser.BWLS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BWRS() { return GetToken(cprogramParser.BWRS, 0); }
+		public BWShiftContext(ExpContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.EnterBWShift(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IcprogramListener typedListener = listener as IcprogramListener;
+			if (typedListener != null) typedListener.ExitBWShift(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IcprogramVisitor<TResult> typedVisitor = visitor as IcprogramVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBWShift(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 	public partial class MultDivContext : ExpContext {
 		public IToken op;
 		[System.Diagnostics.DebuggerNonUserCode] public ExpContext[] exp() {
@@ -366,6 +568,7 @@ public partial class cprogramParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MUL() { return GetToken(cprogramParser.MUL, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIV() { return GetToken(cprogramParser.DIV, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIVR() { return GetToken(cprogramParser.DIVR, 0); }
 		public MultDivContext(ExpContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
@@ -405,20 +608,7 @@ public partial class cprogramParser : Parser {
 			State = 30;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case T__1:
-				{
-				_localctx = new ParensContext(_localctx);
-				Context = _localctx;
-				_prevctx = _localctx;
-
-				State = 23;
-				Match(T__1);
-				State = 24;
-				exp(0);
-				State = 25;
-				Match(T__2);
-				}
-				break;
+			case ADD:
 			case SUB:
 			case BWC:
 			case LNT:
@@ -426,18 +616,32 @@ public partial class cprogramParser : Parser {
 				_localctx = new UnaryContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 27;
+
+				State = 23;
 				((UnaryContext)_localctx).op = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 114688L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 983040L) != 0)) ) {
 					((UnaryContext)_localctx).op = ErrorHandler.RecoverInline(this);
 				}
 				else {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 28;
-				exp(2);
+				State = 24;
+				exp(12);
+				}
+				break;
+			case T__1:
+				{
+				_localctx = new ParensContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 25;
+				Match(T__1);
+				State = 26;
+				exp(0);
+				State = 27;
+				Match(T__2);
 				}
 				break;
 			case INT:
@@ -453,7 +657,7 @@ public partial class cprogramParser : Parser {
 				throw new NoViableAltException(this);
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 40;
+			State = 61;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,2,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
@@ -462,7 +666,7 @@ public partial class cprogramParser : Parser {
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 38;
+					State = 59;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,1,Context) ) {
 					case 1:
@@ -470,11 +674,11 @@ public partial class cprogramParser : Parser {
 						_localctx = new MultDivContext(new ExpContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_exp);
 						State = 32;
-						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
+						if (!(Precpred(Context, 11))) throw new FailedPredicateException(this, "Precpred(Context, 11)");
 						State = 33;
 						((MultDivContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
-						if ( !(_la==MUL || _la==DIV) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 57344L) != 0)) ) {
 							((MultDivContext)_localctx).op = ErrorHandler.RecoverInline(this);
 						}
 						else {
@@ -482,7 +686,7 @@ public partial class cprogramParser : Parser {
 						    Consume();
 						}
 						State = 34;
-						exp(6);
+						exp(12);
 						}
 						break;
 					case 2:
@@ -490,7 +694,7 @@ public partial class cprogramParser : Parser {
 						_localctx = new AddSubContext(new ExpContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_exp);
 						State = 35;
-						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
+						if (!(Precpred(Context, 10))) throw new FailedPredicateException(this, "Precpred(Context, 10)");
 						State = 36;
 						((AddSubContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
@@ -502,13 +706,129 @@ public partial class cprogramParser : Parser {
 						    Consume();
 						}
 						State = 37;
+						exp(11);
+						}
+						break;
+					case 3:
+						{
+						_localctx = new BWShiftContext(new ExpContext(_parentctx, _parentState));
+						PushNewRecursionContext(_localctx, _startState, RULE_exp);
+						State = 38;
+						if (!(Precpred(Context, 9))) throw new FailedPredicateException(this, "Precpred(Context, 9)");
+						State = 39;
+						((BWShiftContext)_localctx).op = TokenStream.LT(1);
+						_la = TokenStream.LA(1);
+						if ( !(_la==BWRS || _la==BWLS) ) {
+							((BWShiftContext)_localctx).op = ErrorHandler.RecoverInline(this);
+						}
+						else {
+							ErrorHandler.ReportMatch(this);
+						    Consume();
+						}
+						State = 40;
+						exp(10);
+						}
+						break;
+					case 4:
+						{
+						_localctx = new RelationalContext(new ExpContext(_parentctx, _parentState));
+						PushNewRecursionContext(_localctx, _startState, RULE_exp);
+						State = 41;
+						if (!(Precpred(Context, 8))) throw new FailedPredicateException(this, "Precpred(Context, 8)");
+						State = 42;
+						((RelationalContext)_localctx).op = TokenStream.LT(1);
+						_la = TokenStream.LA(1);
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 503316480L) != 0)) ) {
+							((RelationalContext)_localctx).op = ErrorHandler.RecoverInline(this);
+						}
+						else {
+							ErrorHandler.ReportMatch(this);
+						    Consume();
+						}
+						State = 43;
+						exp(9);
+						}
+						break;
+					case 5:
+						{
+						_localctx = new EqualityContext(new ExpContext(_parentctx, _parentState));
+						PushNewRecursionContext(_localctx, _startState, RULE_exp);
+						State = 44;
+						if (!(Precpred(Context, 7))) throw new FailedPredicateException(this, "Precpred(Context, 7)");
+						State = 45;
+						((EqualityContext)_localctx).op = TokenStream.LT(1);
+						_la = TokenStream.LA(1);
+						if ( !(_la==EQLS || _la==NEQLS) ) {
+							((EqualityContext)_localctx).op = ErrorHandler.RecoverInline(this);
+						}
+						else {
+							ErrorHandler.ReportMatch(this);
+						    Consume();
+						}
+						State = 46;
+						exp(8);
+						}
+						break;
+					case 6:
+						{
+						_localctx = new BWAndContext(new ExpContext(_parentctx, _parentState));
+						PushNewRecursionContext(_localctx, _startState, RULE_exp);
+						State = 47;
+						if (!(Precpred(Context, 6))) throw new FailedPredicateException(this, "Precpred(Context, 6)");
+						State = 48;
+						((BWAndContext)_localctx).op = Match(BWA);
+						State = 49;
+						exp(7);
+						}
+						break;
+					case 7:
+						{
+						_localctx = new BWXorContext(new ExpContext(_parentctx, _parentState));
+						PushNewRecursionContext(_localctx, _startState, RULE_exp);
+						State = 50;
+						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
+						State = 51;
+						((BWXorContext)_localctx).op = Match(BWX);
+						State = 52;
+						exp(6);
+						}
+						break;
+					case 8:
+						{
+						_localctx = new BWOrContext(new ExpContext(_parentctx, _parentState));
+						PushNewRecursionContext(_localctx, _startState, RULE_exp);
+						State = 53;
+						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
+						State = 54;
+						((BWOrContext)_localctx).op = Match(BWO);
+						State = 55;
 						exp(5);
+						}
+						break;
+					case 9:
+						{
+						_localctx = new LogicalContext(new ExpContext(_parentctx, _parentState));
+						PushNewRecursionContext(_localctx, _startState, RULE_exp);
+						State = 56;
+						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
+						State = 57;
+						((LogicalContext)_localctx).op = TokenStream.LT(1);
+						_la = TokenStream.LA(1);
+						if ( !(_la==OR || _la==AND) ) {
+							((LogicalContext)_localctx).op = ErrorHandler.RecoverInline(this);
+						}
+						else {
+							ErrorHandler.ReportMatch(this);
+						    Consume();
+						}
+						State = 58;
+						exp(4);
 						}
 						break;
 					}
 					} 
 				}
-				State = 42;
+				State = 63;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,2,Context);
 			}
@@ -533,26 +853,40 @@ public partial class cprogramParser : Parser {
 	}
 	private bool exp_sempred(ExpContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return Precpred(Context, 5);
-		case 1: return Precpred(Context, 4);
+		case 0: return Precpred(Context, 11);
+		case 1: return Precpred(Context, 10);
+		case 2: return Precpred(Context, 9);
+		case 3: return Precpred(Context, 8);
+		case 4: return Precpred(Context, 7);
+		case 5: return Precpred(Context, 6);
+		case 6: return Precpred(Context, 5);
+		case 7: return Precpred(Context, 4);
+		case 8: return Precpred(Context, 3);
 		}
 		return true;
 	}
 
 	private static int[] _serializedATN = {
-		4,1,16,44,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,1,0,1,0,1,1,1,1,1,1,1,1,1,1,
+		4,1,32,65,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,1,0,1,0,1,1,1,1,1,1,1,1,1,1,
 		1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,31,8,3,
-		1,3,1,3,1,3,1,3,1,3,1,3,5,3,39,8,3,10,3,12,3,42,9,3,1,3,0,1,6,4,0,2,4,
-		6,0,3,1,0,14,16,1,0,11,12,1,0,13,14,43,0,8,1,0,0,0,2,10,1,0,0,0,4,18,1,
-		0,0,0,6,30,1,0,0,0,8,9,3,2,1,0,9,1,1,0,0,0,10,11,5,1,0,0,11,12,5,9,0,0,
-		12,13,5,2,0,0,13,14,5,3,0,0,14,15,5,4,0,0,15,16,3,4,2,0,16,17,5,5,0,0,
-		17,3,1,0,0,0,18,19,5,6,0,0,19,20,3,6,3,0,20,21,5,7,0,0,21,5,1,0,0,0,22,
-		23,6,3,-1,0,23,24,5,2,0,0,24,25,3,6,3,0,25,26,5,3,0,0,26,31,1,0,0,0,27,
-		28,7,0,0,0,28,31,3,6,3,2,29,31,5,10,0,0,30,22,1,0,0,0,30,27,1,0,0,0,30,
-		29,1,0,0,0,31,40,1,0,0,0,32,33,10,5,0,0,33,34,7,1,0,0,34,39,3,6,3,6,35,
-		36,10,4,0,0,36,37,7,2,0,0,37,39,3,6,3,5,38,32,1,0,0,0,38,35,1,0,0,0,39,
-		42,1,0,0,0,40,38,1,0,0,0,40,41,1,0,0,0,41,7,1,0,0,0,42,40,1,0,0,0,3,30,
-		38,40
+		1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,
+		3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,5,3,60,8,3,10,3,12,3,63,9,3,1,3,
+		0,1,6,4,0,2,4,6,0,7,1,0,16,19,1,0,13,15,1,0,16,17,1,0,20,21,1,0,25,28,
+		1,0,29,30,1,0,31,32,71,0,8,1,0,0,0,2,10,1,0,0,0,4,18,1,0,0,0,6,30,1,0,
+		0,0,8,9,3,2,1,0,9,1,1,0,0,0,10,11,5,1,0,0,11,12,5,11,0,0,12,13,5,2,0,0,
+		13,14,5,3,0,0,14,15,5,4,0,0,15,16,3,4,2,0,16,17,5,5,0,0,17,3,1,0,0,0,18,
+		19,5,6,0,0,19,20,3,6,3,0,20,21,5,7,0,0,21,5,1,0,0,0,22,23,6,3,-1,0,23,
+		24,7,0,0,0,24,31,3,6,3,12,25,26,5,2,0,0,26,27,3,6,3,0,27,28,5,3,0,0,28,
+		31,1,0,0,0,29,31,5,12,0,0,30,22,1,0,0,0,30,25,1,0,0,0,30,29,1,0,0,0,31,
+		61,1,0,0,0,32,33,10,11,0,0,33,34,7,1,0,0,34,60,3,6,3,12,35,36,10,10,0,
+		0,36,37,7,2,0,0,37,60,3,6,3,11,38,39,10,9,0,0,39,40,7,3,0,0,40,60,3,6,
+		3,10,41,42,10,8,0,0,42,43,7,4,0,0,43,60,3,6,3,9,44,45,10,7,0,0,45,46,7,
+		5,0,0,46,60,3,6,3,8,47,48,10,6,0,0,48,49,5,22,0,0,49,60,3,6,3,7,50,51,
+		10,5,0,0,51,52,5,24,0,0,52,60,3,6,3,6,53,54,10,4,0,0,54,55,5,23,0,0,55,
+		60,3,6,3,5,56,57,10,3,0,0,57,58,7,6,0,0,58,60,3,6,3,4,59,32,1,0,0,0,59,
+		35,1,0,0,0,59,38,1,0,0,0,59,41,1,0,0,0,59,44,1,0,0,0,59,47,1,0,0,0,59,
+		50,1,0,0,0,59,53,1,0,0,0,59,56,1,0,0,0,60,63,1,0,0,0,61,59,1,0,0,0,61,
+		62,1,0,0,0,62,7,1,0,0,0,63,61,1,0,0,0,3,30,59,61
 	};
 
 	public static readonly ATN _ATN =

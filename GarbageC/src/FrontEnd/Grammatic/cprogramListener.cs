@@ -97,6 +97,78 @@ public interface IcprogramListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitLiteral([NotNull] cprogramParser.LiteralContext context);
 	/// <summary>
+	/// Enter a parse tree produced by the <c>BWOr</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterBWOr([NotNull] cprogramParser.BWOrContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>BWOr</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitBWOr([NotNull] cprogramParser.BWOrContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>Relational</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterRelational([NotNull] cprogramParser.RelationalContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>Relational</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitRelational([NotNull] cprogramParser.RelationalContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>BWAnd</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterBWAnd([NotNull] cprogramParser.BWAndContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>BWAnd</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitBWAnd([NotNull] cprogramParser.BWAndContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>Logical</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterLogical([NotNull] cprogramParser.LogicalContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>Logical</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitLogical([NotNull] cprogramParser.LogicalContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>Equality</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterEquality([NotNull] cprogramParser.EqualityContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>Equality</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitEquality([NotNull] cprogramParser.EqualityContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>BWXor</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterBWXor([NotNull] cprogramParser.BWXorContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>BWXor</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitBWXor([NotNull] cprogramParser.BWXorContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>Unary</c>
 	/// labeled alternative in <see cref="cprogramParser.exp"/>.
 	/// </summary>
@@ -108,6 +180,18 @@ public interface IcprogramListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitUnary([NotNull] cprogramParser.UnaryContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>BWShift</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterBWShift([NotNull] cprogramParser.BWShiftContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>BWShift</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitBWShift([NotNull] cprogramParser.BWShiftContext context);
 	/// <summary>
 	/// Enter a parse tree produced by the <c>MultDiv</c>
 	/// labeled alternative in <see cref="cprogramParser.exp"/>.

@@ -20,6 +20,8 @@ class Program
             return;
         }
 
+        Console.WriteLine($"Compiling {args[0]}");
+        
         string source = File.ReadAllText(args[0]);
         AntlrInputStream inputStream = new AntlrInputStream(source); // CharStream
         

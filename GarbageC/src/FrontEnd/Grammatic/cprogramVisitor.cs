@@ -71,12 +71,61 @@ public interface IcprogramVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitLiteral([NotNull] cprogramParser.LiteralContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>BWOr</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBWOr([NotNull] cprogramParser.BWOrContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Relational</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRelational([NotNull] cprogramParser.RelationalContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>BWAnd</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBWAnd([NotNull] cprogramParser.BWAndContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Logical</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLogical([NotNull] cprogramParser.LogicalContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Equality</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEquality([NotNull] cprogramParser.EqualityContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>BWXor</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBWXor([NotNull] cprogramParser.BWXorContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>Unary</c>
 	/// labeled alternative in <see cref="cprogramParser.exp"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitUnary([NotNull] cprogramParser.UnaryContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>BWShift</c>
+	/// labeled alternative in <see cref="cprogramParser.exp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBWShift([NotNull] cprogramParser.BWShiftContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>MultDiv</c>
 	/// labeled alternative in <see cref="cprogramParser.exp"/>.
